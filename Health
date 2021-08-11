@@ -1,0 +1,69 @@
+//Created by Akeem Roberts
+//Edited by Justin Simmons
+
+using UnityEngine;
+
+public class PlayerHealth : MonoBehaviour
+{
+    [Header("Player health stats can be adjusted here")]
+    [Tooltip("Use the follow to adjust health")]
+    public int playerMaxHealth;
+    public int playerCurrentHealth;
+
+    private GUIManager _playerHud;
+    private CharacterSoundController _playerSound;
+
+    public bool isInvincible;
+
+    // public AudioSource HealSound;
+
+    [Tooltip("Add heal particle here")]
+    public ParticleSystem HealParticle; //Need to activate collider trigger in particle system and add healing power up colliders
+    private void Awake()
+    {
+        //Finds the GUI manager to adjust sliders
+        _playerHud = FindObjectOfType<GUIManager>();
+        //Finds the player sound controller to play sound
+        _playerSound = GetComponent<CharacterSoundController>();
+    }
+
+    private void Start()
+    {
+        
+
+        
+    }
+
+    private void Update()
+    {
+        //If the player dies, make the menu screen and effects happen
+        if(playerCurrentHealth < 0)
+            GameManager.Instance.PlayerHasDied();
+    }
+
+
+    
+    public void Damage(int damageAmount) // decrease health by damage amount
+    {
+        if (isInvincible == false)
+        {
+            playerCurrentHealth -= damageAmount;
+
+            //Plays sound indicating the player was damaged
+            _playerSound.PlayDamagedSound();
+
+            //Sends info to UI to display
+            _playerHud.ChangeHealthSliderValue(-damageAmount);
+        }
+    }
+
+    public void Heal(int healAmount) // increase health by heal amount
+    {
+        playerCurrentHealth += healAmount;
+        HealParticle.Play();
+        // HealSound.Play();
+        Debug.Log("Particle System Plays");
+        //Sends info to UI to display
+        _playerHud.ChangeHealthSliderValue(healAmount);
+    }
+}
